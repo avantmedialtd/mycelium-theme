@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mycelium Theme Preview</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  body {
+    background: #0F0F23;
+    color: #D1D5DB;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 24px;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  .header h1 {
+    font-size: 36px;
+    font-weight: 700;
+    color: #FFFFFF;
+    margin-bottom: 8px;
+  }
+
+  .header h1 span { color: #6366F1; }
+
+  .header p {
+    color: #9CA3AF;
+    font-size: 16px;
+  }
+
+  /* Palette Strip */
+  .palette {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-bottom: 48px;
+    flex-wrap: wrap;
+  }
+
+  .swatch {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .swatch-color {
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    border: 1px solid #374151;
+  }
+
+  .swatch-label {
+    font-size: 11px;
+    color: #9CA3AF;
+    font-family: 'Cascadia Code', 'Fira Code', monospace;
+  }
+
+  /* Editor Mock */
+  .editor-window {
+    background: #0A0A1A;
+    border-radius: 12px;
+    border: 1px solid #374151;
+    overflow: hidden;
+    margin-bottom: 32px;
+  }
+
+  .editor-titlebar {
+    background: #0A0A1A;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid #374151;
+  }
+
+  .dot { width: 12px; height: 12px; border-radius: 50%; }
+  .dot-red { background: #F87171; }
+  .dot-yellow { background: #FBBF24; }
+  .dot-green { background: #34D399; }
+
+  .editor-titlebar span {
+    color: #9CA3AF;
+    font-size: 13px;
+    margin-left: 8px;
+  }
+
+  .editor-tabs {
+    display: flex;
+    background: #0A0A1A;
+    border-bottom: 1px solid #374151;
+  }
+
+  .tab {
+    padding: 8px 20px;
+    font-size: 13px;
+    color: #9CA3AF;
+    border-right: 1px solid #374151;
+    cursor: pointer;
+    position: relative;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+  }
+
+  .tab.active {
+    background: #0F0F23;
+    color: #FFFFFF;
+  }
+
+  .tab.active::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #6366F1;
+  }
+
+  .editor-body {
+    display: flex;
+  }
+
+  .sidebar-mock {
+    width: 48px;
+    background: #0A0A1A;
+    border-right: 1px solid #374151;
+    padding: 12px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .sidebar-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #9CA3AF;
+    font-size: 14px;
+  }
+
+  .sidebar-icon.active { color: #6366F1; }
+
+  .file-tree {
+    width: 220px;
+    background: #0A0A1A;
+    border-right: 1px solid #374151;
+    padding: 8px 0;
+    font-size: 13px;
+  }
+
+  .file-tree-header {
+    padding: 4px 12px;
+    color: #9CA3AF;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .file-item {
+    padding: 3px 12px 3px 24px;
+    color: #D1D5DB;
+    cursor: pointer;
+  }
+
+  .file-item:hover { background: #1A1A2E; }
+  .file-item.active { background: #6366F130; color: #FFFFFF; }
+  .file-item.folder { color: #FBBF24; }
+  .file-item.ts { color: #22D3EE; }
+  .file-item.json { color: #34D399; }
+  .file-item.added { color: #34D399; }
+  .file-item.modified { color: #818CF8; }
+
+  .code-area {
+    flex: 1;
+    padding: 16px 0;
+    overflow-x: auto;
+    background: #0F0F23;
+  }
+
+  /* Code Styling */
+  pre {
+    font-family: 'Cascadia Code', 'Fira Code', 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+    font-size: 13.5px;
+    line-height: 1.65;
+    tab-size: 2;
+  }
+
+  .line {
+    display: flex;
+    min-height: 22px;
+    padding: 0 16px 0 0;
+  }
+
+  .line:hover { background: #1A1A2E; }
+
+  .line-number {
+    display: inline-block;
+    width: 48px;
+    text-align: right;
+    padding-right: 16px;
+    color: #374151;
+    user-select: none;
+    flex-shrink: 0;
+  }
+
+  .line.active .line-number { color: #6366F1; }
+  .line.active { background: #1A1A2E; }
+
+  .line-content { white-space: pre; }
+
+  /* Syntax Colors */
+  .kw { color: #C084FC; }              /* keywords */
+  .kw-i { color: #C084FC; font-style: italic; }  /* control flow */
+  .fn { color: #6366F1; }              /* function names */
+  .fn-m { color: #818CF8; }            /* method calls */
+  .str { color: #34D399; }             /* strings */
+  .str-e { color: #6EE7B7; }           /* string escapes */
+  .num { color: #FBBF24; }             /* numbers */
+  .type { color: #22D3EE; }            /* types, classes */
+  .type-i { color: #22D3EE; font-style: italic; } /* interfaces */
+  .prop { color: #93C5FD; }            /* properties */
+  .param { color: #FCA5A5; font-style: italic; }  /* parameters */
+  .op { color: #818CF8; }              /* operators */
+  .cmt { color: #4B5563; font-style: italic; }    /* comments */
+  .tag { color: #F87171; }             /* HTML tags */
+  .attr { color: #FBBF24; font-style: italic; }   /* attributes */
+  .punc { color: #9CA3AF; }            /* punctuation */
+  .lang { color: #F87171; font-style: italic; }   /* this, self */
+  .dec { color: #FBBF24; font-style: italic; }    /* decorators */
+  .tpl { color: #C084FC; }             /* template expressions */
+  .const { color: #FBBF24; font-style: italic; }  /* constants */
+  .reg { color: #22D3EE; }             /* regex */
+  .txt { color: #D1D5DB; }             /* default text */
+
+  /* Status Bar */
+  .statusbar {
+    background: #0A0A1A;
+    border-top: 1px solid #374151;
+    padding: 3px 16px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #9CA3AF;
+  }
+
+  .statusbar-left, .statusbar-right {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+
+  .statusbar .remote {
+    background: #6366F1;
+    color: #FFF;
+    padding: 1px 8px;
+    margin-left: -16px;
+    font-size: 11px;
+  }
+
+  /* Legend */
+  .legend {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 8px;
+    padding: 24px;
+    background: #1A1A2E;
+    border-radius: 12px;
+    border: 1px solid #374151;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+  }
+
+  .legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  .section-title {
+    font-size: 14px;
+    color: #FFFFFF;
+    margin-bottom: 16px;
+    font-weight: 600;
+  }
+
+  @media (max-width: 800px) {
+    .file-tree { display: none; }
+    .sidebar-mock { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <!-- Header -->
+  <div class="header">
+    <h1>🍄 <span>Mycelium</span></h1>
+    <p>A dark theme with deep navy backgrounds and indigo bioluminescence</p>
+  </div>
+
+  <!-- Palette Strip -->
+  <div class="palette">
+    <div class="swatch">
+      <div class="swatch-color" style="background: #0F0F23;"></div>
+      <span class="swatch-label">#0F0F23</span>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background: #1A1A2E;"></div>
+      <span class="swatch-label">#1A1A2E</span>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background: #374151;"></div>
+      <span class="swatch-label">#374151</span>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background: #6366F1;"></div>
+      <span class="swatch-label">#6366F1</span>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background: #C084FC;"></div>
+      <span class="swatch-label">#C084FC</span>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background: #22D3EE;"></div>
+      <span class="swatch-label">#22D3EE</span>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background: #34D399;"></div>
+      <span class="swatch-label">#34D399</span>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background: #FBBF24;"></div>
+      <span class="swatch-label">#FBBF24</span>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background: #F87171;"></div>
+      <span class="swatch-label">#F87171</span>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background: #93C5FD;"></div>
+      <span class="swatch-label">#93C5FD</span>
+    </div>
+  </div>
+
+  <!-- Editor Mock -->
+  <div class="editor-window">
+    <div class="editor-titlebar">
+      <div class="dot dot-red"></div>
+      <div class="dot dot-yellow"></div>
+      <div class="dot dot-green"></div>
+      <span>Mycelium — Visual Studio Code</span>
+    </div>
+    <div class="editor-tabs">
+      <div class="tab active">booking.service.ts</div>
+      <div class="tab">property.model.ts</div>
+      <div class="tab">calendar.tsx</div>
+    </div>
+    <div class="editor-body">
+      <div class="sidebar-mock">
+        <div class="sidebar-icon active">☰</div>
+        <div class="sidebar-icon">⚲</div>
+        <div class="sidebar-icon">⎇</div>
+        <div class="sidebar-icon">▶</div>
+        <div class="sidebar-icon">⧉</div>
+      </div>
+      <div class="file-tree">
+        <div class="file-tree-header">Explorer</div>
+        <div class="file-item folder">▾ src</div>
+        <div class="file-item folder" style="padding-left:36px">▾ services</div>
+        <div class="file-item active ts" style="padding-left:48px">booking.service.ts</div>
+        <div class="file-item modified ts" style="padding-left:48px">calendar.service.ts</div>
+        <div class="file-item folder" style="padding-left:36px">▾ models</div>
+        <div class="file-item ts" style="padding-left:48px">property.model.ts</div>
+        <div class="file-item added ts" style="padding-left:48px">guest.model.ts</div>
+        <div class="file-item folder" style="padding-left:36px">▾ components</div>
+        <div class="file-item ts" style="padding-left:48px">calendar.tsx</div>
+        <div class="file-item json" style="padding-left:24px">package.json</div>
+        <div class="file-item json" style="padding-left:24px">tsconfig.json</div>
+      </div>
+      <div class="code-area">
+        <pre>
+<div class="line"><span class="line-number"> 1</span><span class="line-content"><span class="kw">import</span> <span class="punc">{</span> <span class="type">Injectable</span> <span class="punc">}</span> <span class="kw">from</span> <span class="str">'@nestjs/common'</span><span class="punc">;</span></span></div>
+<div class="line"><span class="line-number"> 2</span><span class="line-content"><span class="kw">import</span> <span class="punc">{</span> <span class="type-i">BookingRepository</span> <span class="punc">}</span> <span class="kw">from</span> <span class="str">'./booking.repository'</span><span class="punc">;</span></span></div>
+<div class="line"><span class="line-number"> 3</span><span class="line-content"><span class="kw">import</span> <span class="punc">{</span> <span class="type-i">Booking</span><span class="punc">,</span> <span class="type-i">BookingStatus</span><span class="punc">,</span> <span class="type-i">Guest</span> <span class="punc">}</span> <span class="kw">from</span> <span class="str">'../models'</span><span class="punc">;</span></span></div>
+<div class="line"><span class="line-number"> 4</span><span class="line-content"></span></div>
+<div class="line"><span class="line-number"> 5</span><span class="line-content"><span class="cmt">/** Handles booking lifecycle for Mycelium properties */</span></span></div>
+<div class="line"><span class="line-number"> 6</span><span class="line-content"><span class="dec">@Injectable</span><span class="punc">()</span></span></div>
+<div class="line active"><span class="line-number"> 7</span><span class="line-content"><span class="kw">export</span> <span class="kw">class</span> <span class="type">BookingService</span> <span class="punc">{</span></span></div>
+<div class="line"><span class="line-number"> 8</span><span class="line-content">  <span class="kw">private</span> <span class="kw">readonly</span> <span class="prop">MAX_GUESTS</span> <span class="op">=</span> <span class="num">6</span><span class="punc">;</span></span></div>
+<div class="line"><span class="line-number"> 9</span><span class="line-content">  <span class="kw">private</span> <span class="kw">readonly</span> <span class="prop">CLEANING_FEE</span> <span class="op">=</span> <span class="num">45.00</span><span class="punc">;</span></span></div>
+<div class="line"><span class="line-number">10</span><span class="line-content"></span></div>
+<div class="line"><span class="line-number">11</span><span class="line-content">  <span class="kw">constructor</span><span class="punc">(</span></span></div>
+<div class="line"><span class="line-number">12</span><span class="line-content">    <span class="kw">private</span> <span class="kw">readonly</span> <span class="param">repo</span><span class="punc">:</span> <span class="type-i">BookingRepository</span><span class="punc">,</span></span></div>
+<div class="line"><span class="line-number">13</span><span class="line-content">  <span class="punc">)</span> <span class="punc">{}</span></span></div>
+<div class="line"><span class="line-number">14</span><span class="line-content"></span></div>
+<div class="line"><span class="line-number">15</span><span class="line-content">  <span class="kw">async</span> <span class="fn">createBooking</span><span class="punc">(</span></span></div>
+<div class="line"><span class="line-number">16</span><span class="line-content">    <span class="param">guest</span><span class="punc">:</span> <span class="type-i">Guest</span><span class="punc">,</span></span></div>
+<div class="line"><span class="line-number">17</span><span class="line-content">    <span class="param">checkIn</span><span class="punc">:</span> <span class="type">Date</span><span class="punc">,</span></span></div>
+<div class="line"><span class="line-number">18</span><span class="line-content">    <span class="param">checkOut</span><span class="punc">:</span> <span class="type">Date</span><span class="punc">,</span></span></div>
+<div class="line"><span class="line-number">19</span><span class="line-content">  <span class="punc">)</span><span class="punc">:</span> <span class="type">Promise</span><span class="punc">&lt;</span><span class="type-i">Booking</span><span class="punc">&gt;</span> <span class="punc">{</span></span></div>
+<div class="line"><span class="line-number">20</span><span class="line-content">    <span class="cmt">// Validate dates</span></span></div>
+<div class="line"><span class="line-number">21</span><span class="line-content">    <span class="kw-i">if</span> <span class="punc">(</span><span class="param">checkIn</span> <span class="op">>=</span> <span class="param">checkOut</span><span class="punc">)</span> <span class="punc">{</span></span></div>
+<div class="line"><span class="line-number">22</span><span class="line-content">      <span class="kw-i">throw</span> <span class="kw">new</span> <span class="type">Error</span><span class="punc">(</span><span class="str">'Check-out must be after check-in'</span><span class="punc">)</span><span class="punc">;</span></span></div>
+<div class="line"><span class="line-number">23</span><span class="line-content">    <span class="punc">}</span></span></div>
+<div class="line"><span class="line-number">24</span><span class="line-content"></span></div>
+<div class="line"><span class="line-number">25</span><span class="line-content">    <span class="kw">const</span> <span class="txt">nights</span> <span class="op">=</span> <span class="lang">this</span><span class="punc">.</span><span class="fn-m">calculateNights</span><span class="punc">(</span><span class="param">checkIn</span><span class="punc">,</span> <span class="param">checkOut</span><span class="punc">)</span><span class="punc">;</span></span></div>
+<div class="line"><span class="line-number">26</span><span class="line-content">    <span class="kw">const</span> <span class="txt">rate</span> <span class="op">=</span> <span class="kw-i">await</span> <span class="lang">this</span><span class="punc">.</span><span class="fn-m">getNightlyRate</span><span class="punc">(</span><span class="param">checkIn</span><span class="punc">)</span><span class="punc">;</span></span></div>
+<div class="line"><span class="line-number">27</span><span class="line-content">    <span class="kw">const</span> <span class="txt">total</span> <span class="op">=</span> <span class="txt">nights</span> <span class="op">*</span> <span class="txt">rate</span> <span class="op">+</span> <span class="lang">this</span><span class="punc">.</span><span class="prop">CLEANING_FEE</span><span class="punc">;</span></span></div>
+<div class="line"><span class="line-number">28</span><span class="line-content"></span></div>
+<div class="line"><span class="line-number">29</span><span class="line-content">    <span class="kw">const</span> <span class="txt">booking</span><span class="punc">:</span> <span class="type-i">Booking</span> <span class="op">=</span> <span class="punc">{</span></span></div>
+<div class="line"><span class="line-number">30</span><span class="line-content">      <span class="prop">id</span><span class="punc">:</span> <span class="fn">crypto</span><span class="punc">.</span><span class="fn-m">randomUUID</span><span class="punc">(),</span></span></div>
+<div class="line"><span class="line-number">31</span><span class="line-content">      <span class="prop">guest</span><span class="punc">,</span></span></div>
+<div class="line"><span class="line-number">32</span><span class="line-content">      <span class="prop">checkIn</span><span class="punc">,</span></span></div>
+<div class="line"><span class="line-number">33</span><span class="line-content">      <span class="prop">checkOut</span><span class="punc">,</span></span></div>
+<div class="line"><span class="line-number">34</span><span class="line-content">      <span class="prop">nights</span><span class="punc">,</span></span></div>
+<div class="line"><span class="line-number">35</span><span class="line-content">      <span class="prop">total</span><span class="punc">,</span></span></div>
+<div class="line"><span class="line-number">36</span><span class="line-content">      <span class="prop">status</span><span class="punc">:</span> <span class="type-i">BookingStatus</span><span class="punc">.</span><span class="prop">Confirmed</span><span class="punc">,</span></span></div>
+<div class="line"><span class="line-number">37</span><span class="line-content">      <span class="prop">createdAt</span><span class="punc">:</span> <span class="kw">new</span> <span class="type">Date</span><span class="punc">(),</span></span></div>
+<div class="line"><span class="line-number">38</span><span class="line-content">    <span class="punc">};</span></span></div>
+<div class="line"><span class="line-number">39</span><span class="line-content"></span></div>
+<div class="line"><span class="line-number">40</span><span class="line-content">    <span class="kw-i">return</span> <span class="lang">this</span><span class="punc">.</span><span class="param">repo</span><span class="punc">.</span><span class="fn-m">save</span><span class="punc">(</span><span class="txt">booking</span><span class="punc">)</span><span class="punc">;</span></span></div>
+<div class="line"><span class="line-number">41</span><span class="line-content">  <span class="punc">}</span></span></div>
+<div class="line"><span class="line-number">42</span><span class="line-content"></span></div>
+<div class="line"><span class="line-number">43</span><span class="line-content">  <span class="kw">private</span> <span class="fn">calculateNights</span><span class="punc">(</span><span class="param">from</span><span class="punc">:</span> <span class="type">Date</span><span class="punc">,</span> <span class="param">to</span><span class="punc">:</span> <span class="type">Date</span><span class="punc">)</span><span class="punc">:</span> <span class="type">number</span> <span class="punc">{</span></span></div>
+<div class="line"><span class="line-number">44</span><span class="line-content">    <span class="kw">const</span> <span class="txt">ms</span> <span class="op">=</span> <span class="param">to</span><span class="punc">.</span><span class="fn-m">getTime</span><span class="punc">()</span> <span class="op">-</span> <span class="param">from</span><span class="punc">.</span><span class="fn-m">getTime</span><span class="punc">();</span></span></div>
+<div class="line"><span class="line-number">45</span><span class="line-content">    <span class="kw-i">return</span> <span class="type">Math</span><span class="punc">.</span><span class="fn-m">ceil</span><span class="punc">(</span><span class="txt">ms</span> <span class="op">/</span> <span class="punc">(</span><span class="num">1000</span> <span class="op">*</span> <span class="num">60</span> <span class="op">*</span> <span class="num">60</span> <span class="op">*</span> <span class="num">24</span><span class="punc">));</span></span></div>
+<div class="line"><span class="line-number">46</span><span class="line-content">  <span class="punc">}</span></span></div>
+<div class="line"><span class="line-number">47</span><span class="line-content"><span class="punc">}</span></span></div>
+</pre>
+      </div>
+    </div>
+    <div class="statusbar">
+      <div class="statusbar-left">
+        <span class="remote">⟐ WSL: Ubuntu</span>
+        <span>main</span>
+        <span>⟳ 0 ↓ 0 ↑</span>
+      </div>
+      <div class="statusbar-right">
+        <span>Ln 7, Col 14</span>
+        <span>UTF-8</span>
+        <span>TypeScript</span>
+        <span>Mycelium</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Token Legend -->
+  <div class="section-title">Syntax Token Colors</div>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#C084FC"></div> Keywords</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#6366F1"></div> Functions</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#818CF8"></div> Methods / Operators</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#34D399"></div> Strings</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#22D3EE"></div> Types / Classes</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#FBBF24"></div> Numbers / Decorators</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#93C5FD"></div> Properties</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#FCA5A5"></div> Parameters</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#F87171"></div> Tags / this</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#4B5563"></div> Comments</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#D1D5DB"></div> Variables / Text</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#9CA3AF"></div> Punctuation</div>
+  </div>
+</div>
+</body>
+</html>
