@@ -2,7 +2,7 @@
     "name": "mycelium-theme",
     "displayName": "Mycelium",
     "description": "A dark theme with deep navy backgrounds and indigo bioluminescence — born from the Avant Media MushRoom palette, designed for long coding sessions.",
-    "version": "0.0.0",
+    "version": "0.0.1",
     "publisher": "avantmedia",
     "author": {
         "name": "István Antal",
