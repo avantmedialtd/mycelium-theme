@@ -13,6 +13,15 @@ A dark theme with deep navy backgrounds and indigo bioluminescence — born from
 | Primary    | Indigo     | `#6366F1` |
 | Text       | Cool Gray  | `#D1D5DB` |
 
+## Status Colors
+
+| Role    | Color | Hex       |
+| ------- | ----- | --------- |
+| Error   | Red   | `#EF4444` |
+| Warning | Amber | `#F59E0B` |
+| Success | Green | `#22C55E` |
+| Info    | Light Indigo | `#818CF8` |
+
 ## Syntax Highlighting
 
 | Token         | Color      | Hex       |
