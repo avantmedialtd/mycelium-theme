@@ -1,0 +1,26 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "shell",
+            "command": "npm version patch && git push --tags",
+            "problemMatcher": [],
+            "label": "Release patch version",
+            "detail": "Bump the patch version and push tags to GitHub"
+        },
+        {
+            "type": "shell",
+            "command": "npm version minor && git push --tags",
+            "problemMatcher": [],
+            "label": "Release minor version",
+            "detail": "Bump the minor version and push tags to GitHub"
+        },
+        {
+            "type": "shell",
+            "command": "npm version major && git push --tags",
+            "problemMatcher": [],
+            "label": "Release major version",
+            "detail": "Bump the major version and push tags to GitHub"
+        }
+    ]
+}
